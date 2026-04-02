@@ -60,8 +60,8 @@ export default function OnboardingPage() {
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg">
-      <div className="sticky top-0 z-10 bg-background/90 px-4 pb-3 pt-4 backdrop-blur-md">
+    <div className="flex min-h-full w-full flex-col">
+      <div className="sticky top-0 z-10 bg-background/90 px-4 pb-3 pt-safe backdrop-blur-md">
         <div className="h-1 overflow-hidden rounded-full bg-border">
           <motion.div
             className="h-full rounded-full bg-foreground"

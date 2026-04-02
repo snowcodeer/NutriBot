@@ -56,7 +56,7 @@ export function HomePage() {
 
   if (phase === "load") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-muted">
+      <div className="flex min-h-[50vh] items-center justify-center text-muted">
         Loading…
       </div>
     );
@@ -67,61 +67,60 @@ export function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <span className="text-lg font-semibold tracking-tight">NutriBot</span>
-          <nav className="flex items-center gap-6 text-sm">
+    <div className="min-h-full bg-background pb-safe text-foreground">
+      <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 py-3">
+          <span className="text-base font-semibold tracking-tight">NutriBot</span>
+          <nav className="flex items-center gap-2">
             <Link
               href="/dashboard"
               onClick={() => nutribotAnalytics.clickedHomeDashboard()}
-              className="text-muted transition hover:text-foreground"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-sm text-muted transition active:opacity-70"
             >
-              Dashboard
+              App
             </Link>
             <Link
               href="/onboarding"
               onClick={() => nutribotAnalytics.clickedHomeGetStarted()}
-              className="rounded-full bg-foreground px-4 py-2 font-medium text-background transition hover:opacity-90"
+              className="flex min-h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-semibold text-background transition active:opacity-90"
             >
-              Get started
+              Start
             </Link>
           </nav>
         </div>
       </header>
 
       <main>
-        <section className="mx-auto max-w-5xl px-5 pb-20 pt-16 sm:pt-24">
+        <section className="px-4 pb-16 pt-8">
           <motion.div
             variants={fadeUp}
             initial="initial"
             animate="animate"
             transition={{ duration: 0.45 }}
-            className="max-w-2xl"
           >
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted">
               Calorie tracking, simplified
             </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="mt-3 text-[2rem] font-semibold leading-[1.15] tracking-tight">
               Track less.
               <br />
               Achieve more.
             </h1>
-            <p className="mt-6 text-lg text-muted sm:text-xl">
+            <p className="mt-5 text-base leading-relaxed text-muted">
               Set your goal, get a clear daily target, and log meals without the
-              spreadsheet energy. Built for people who want results, not busywork.
+              spreadsheet energy.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-col gap-3">
               <Link
                 href="/onboarding"
                 onClick={() => nutribotAnalytics.clickedHomeGetStarted()}
-                className="inline-flex rounded-xl bg-foreground px-8 py-4 text-base font-semibold text-background transition hover:opacity-90"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-foreground text-base font-semibold text-background transition active:opacity-90"
               >
                 Start free setup
               </Link>
               <a
                 href="#how-it-works"
-                className="inline-flex items-center rounded-xl border border-border px-8 py-4 text-base font-medium transition hover:border-foreground/30"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-2xl border border-border text-base font-medium transition active:bg-surface"
               >
                 How it works
               </a>
@@ -129,15 +128,15 @@ export function HomePage() {
           </motion.div>
         </section>
 
-        <section className="border-t border-border bg-surface/50 py-20">
-          <div className="mx-auto max-w-5xl px-5">
-            <h2 className="text-center text-sm font-medium uppercase tracking-wider text-muted">
+        <section className="border-t border-border bg-surface/50 py-12">
+          <div className="px-4">
+            <h2 className="text-center text-xs font-medium uppercase tracking-wider text-muted">
               Why NutriBot
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-center text-2xl font-semibold tracking-tight">
+            <p className="mx-auto mt-2 max-w-sm text-center text-xl font-semibold tracking-tight">
               Everything you need to stay consistent—nothing you don&apos;t.
             </p>
-            <div className="mt-14 grid gap-6 sm:grid-cols-3">
+            <div className="mt-10 flex flex-col gap-4">
               {[
                 {
                   title: "Personal target",
@@ -158,7 +157,7 @@ export function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.35 }}
-                  className="rounded-2xl border border-border bg-background p-6"
+                  className="rounded-2xl border border-border bg-background p-5"
                 >
                   <h3 className="font-semibold">{item.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -170,41 +169,43 @@ export function HomePage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-20">
-          <h2 className="text-sm font-medium uppercase tracking-wider text-muted">
+        <section id="how-it-works" className="scroll-mt-4 px-4 py-14">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-muted">
             How it works
           </h2>
-          <p className="mt-3 text-3xl font-semibold tracking-tight">
+          <p className="mt-2 text-2xl font-semibold tracking-tight">
             Three minutes to your plan.
           </p>
-          <ol className="mt-12 space-y-10">
+          <ol className="mt-8 space-y-6">
             {[
               "Tell us your goal, body stats, and how active you are.",
               "Add diet preferences so the experience fits how you eat.",
               "Land on your personal home screen with your target and food log.",
             ].map((step, i) => (
-              <li key={i} className="flex gap-6">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-sm font-semibold">
+              <li key={i} className="flex gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border text-sm font-semibold">
                   {i + 1}
                 </span>
-                <p className="pt-1 text-lg text-foreground/90">{step}</p>
+                <p className="pt-2 text-base leading-snug text-foreground/90">
+                  {step}
+                </p>
               </li>
             ))}
           </ol>
         </section>
 
-        <section className="border-t border-border py-20">
-          <div className="mx-auto max-w-3xl px-5 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+        <section className="border-t border-border px-4 py-14">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold tracking-tight">
               Ready to see your number?
             </h2>
-            <p className="mt-3 text-muted">
-              No clutter—just onboarding, your target, and a clean home for meals.
+            <p className="mt-2 text-sm text-muted">
+              Onboarding, your target, and a clean home for meals.
             </p>
             <Link
               href="/onboarding"
               onClick={() => nutribotAnalytics.clickedHomeGetStarted()}
-              className="mt-8 inline-flex rounded-xl bg-foreground px-10 py-4 text-base font-semibold text-background transition hover:opacity-90"
+              className="mt-6 flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-foreground text-base font-semibold text-background transition active:opacity-90"
             >
               Get started
             </Link>
@@ -212,17 +213,15 @@ export function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t border-border py-10">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-5 text-sm text-muted sm:flex-row">
-          <span>© {new Date().getFullYear()} NutriBot</span>
-          <div className="flex gap-6">
-            <Link href="/dashboard" className="hover:text-foreground">
-              Dashboard
-            </Link>
-            <Link href="/onboarding" className="hover:text-foreground">
-              Onboarding
-            </Link>
-          </div>
+      <footer className="border-t border-border py-8 text-center text-xs text-muted">
+        <span>© {new Date().getFullYear()} NutriBot</span>
+        <div className="mt-3 flex justify-center gap-6">
+          <Link href="/dashboard" className="active:opacity-70">
+            Open app
+          </Link>
+          <Link href="/onboarding" className="active:opacity-70">
+            Setup
+          </Link>
         </div>
       </footer>
     </div>

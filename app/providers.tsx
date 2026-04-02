@@ -1,5 +1,7 @@
 "use client";
 
+import { MobileAppShell } from "./components/MobileAppShell";
+
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <MobileAppShell>{children}</MobileAppShell>;
 }

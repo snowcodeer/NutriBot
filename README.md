@@ -11,7 +11,20 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — you are redirected to `/onboarding`.
+Open [http://localhost:3000](http://localhost:3000) — marketing home at `/`, onboarding at `/onboarding`.
+
+### Dev server errors (`styled-jsx`, missing `.next` chunks, React `MODULE_NOT_FOUND`)
+
+Usually a **corrupt `node_modules` or `.next` cache**. From the project root:
+
+```bash
+npm run clean
+chmod -R u+w node_modules 2>/dev/null; rm -rf node_modules .next
+npm install
+npm run dev
+```
+
+Use **`styled-jsx@5.1.6`** (matches Next’s version). Avoid `styled-jsx@5.1.7` at the repo root — some publishes omit `index.js` and break `_document` / error pages.
 
 ## Seed PostHog funnel data
 
@@ -19,9 +32,11 @@ Use the same **Project API key** (or a personal API key with event write access)
 
 ```bash
 export POSTHOG_API_KEY=phc_...
-# optional: export POSTHOG_HOST=https://us.i.posthog.com
-npx tsx seed.ts
+# EU cloud (default in seed if unset): export POSTHOG_HOST=https://eu.i.posthog.com
+npm run seed
 ```
+
+The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding, so Insights and person profiles are populated.
 
 Or `npm run seed` after setting env vars.
 
