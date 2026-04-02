@@ -36,7 +36,9 @@ npm run seed
 
 Reads **`POSTHOG_API_KEY`** or **`NEXT_PUBLIC_POSTHOG_KEY`** from **`.env.local`** automatically (via `dotenv`). Override host with **`POSTHOG_HOST`** if needed; EU default is `https://eu.i.posthog.com`.
 
-The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding. Expect **~630** `viewed_paywall`, **~13** `started_free_trial` (≈**2%** conversion) so paywall funnels match the demo story.
+Optional **`SEED_TOTAL_USERS`** (default **10000**, max 500000) scales the funnel; e.g. `SEED_TOTAL_USERS=1000 npm run seed` for a smaller test.
+
+The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding. At default scale expect **~6300** `viewed_paywall`, **~130** `started_free_trial` (≈**2%** conversion).
 
 Or `npm run seed` after setting env vars.
 

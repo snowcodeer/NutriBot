@@ -11,10 +11,12 @@ loadEnv({ path: ".env.local", override: true });
  * Emits every event used by `nutribotAnalytics` plus rich properties and $set person fields
  * so funnels, breakdowns, and person profiles look populated in PostHog.
  *
- * Synthetic KPIs (intentionally weak):
+ * Synthetic KPIs (intentionally weak), same story at any scale:
  * - Onboarding completion: completed_onboarding / clicked_get_started ≈ low single digits %
  * - Paywall conversion: started_free_trial / viewed_paywall ≈ ~2%
  * - Trial cancellation: cancelled_free_trial / started_free_trial ≈ most users
+ *
+ * Default **10_000** distinct users. Override with `SEED_TOTAL_USERS` (e.g. `1000`).
  */
 import { randomBytes, randomInt } from "crypto";
 import { PostHog } from "posthog-node";
@@ -36,12 +38,37 @@ const RESTRICTION_SETS = [
   ["vegan", "other"],
 ] as const;
 
-/** Paywall viewers who start a trial (~2% of paywall). */
-const PAYWALL_VIEWERS = 630;
-const TRIAL_STARTERS = 13;
-const TRIAL_CANCELLED = 11;
-const SKIP_AND_COMPLETE = 8;
-const LIFETIME_CLICKS = 15;
+function parseTotalUsers(): number {
+  const raw = process.env.SEED_TOTAL_USERS;
+  if (raw) {
+    const n = parseInt(raw, 10);
+    if (Number.isFinite(n) && n >= 100 && n <= 500_000) return n;
+    console.warn(
+      "SEED_TOTAL_USERS must be between 100 and 500000; using default 10000."
+    );
+  }
+  return 10_000;
+}
+
+const TOTAL_USERS = parseTotalUsers();
+/** Scale factor vs the original 1k-user funnel shape. */
+const K = TOTAL_USERS / 1000;
+
+/** ~1% of total: homepage only. */
+const IDX_HOMEPAGE_ONLY = TOTAL_USERS - Math.ceil(TOTAL_USERS * 0.01);
+/** ~2% tail: dashboard shortcut cohort (top 1% of that tail is homepage-only above). */
+const IDX_DASHBOARD_SHORTCUT = TOTAL_USERS - Math.ceil(TOTAL_USERS * 0.02);
+
+function thresh(nFrom1kModel: number): number {
+  return Math.floor(nFrom1kModel * K);
+}
+
+/** Indices 0..PAYWALL_VIEWERS-1 see the paywall after “see my plan”. */
+const PAYWALL_VIEWERS = Math.floor(630 * K);
+const TRIAL_STARTERS = Math.floor(13 * K);
+const TRIAL_CANCELLED = Math.floor(11 * K);
+const SKIP_AND_COMPLETE = Math.floor(8 * K);
+const LIFETIME_CLICKS = Math.floor(15 * K);
 
 function distinctId(): string {
   return `user_${randomBytes(5).toString("hex")}`;
@@ -140,11 +167,11 @@ function buildQueueForUser(
     app_version: "1.0.0",
   });
 
-  if (index >= 990) {
+  if (index >= IDX_HOMEPAGE_ONLY) {
     return { events, counts: localCounts };
   }
 
-  if (index >= 980) {
+  if (index >= IDX_DASHBOARD_SHORTCUT) {
     push("clicked_home_dashboard", { placement: "header", intent: "open_app" });
     return { events, counts: localCounts };
   }
@@ -154,25 +181,25 @@ function buildQueueForUser(
   });
 
   push("viewed_welcome_screen", { source: "organic", app_version: "1.0.0" });
-  if (index >= 850) return { events, counts: localCounts };
+  if (index >= thresh(850)) return { events, counts: localCounts };
 
   push("clicked_get_started", { cta: "welcome_primary" });
-  if (index >= 840) return { events, counts: localCounts };
+  if (index >= thresh(840)) return { events, counts: localCounts };
 
   push("viewed_goal_selection", {
     variant: "default",
     step_index: 1,
   });
-  if (index >= 820) return { events, counts: localCounts };
+  if (index >= thresh(820)) return { events, counts: localCounts };
 
   push("selected_goal", { goal });
-  if (index >= 800) return { events, counts: localCounts };
+  if (index >= thresh(800)) return { events, counts: localCounts };
 
   push("viewed_body_stats", {
     unit_default: "metric",
     fields: ["height", "weight", "target_weight"],
   });
-  if (index >= 750) return { events, counts: localCounts };
+  if (index >= thresh(750)) return { events, counts: localCounts };
 
   push("completed_body_stats", {
     has_target_weight: hasTarget,
@@ -180,24 +207,24 @@ function buildQueueForUser(
     height_cm: heightCm,
     weight_kg: Math.round(weightKg * 10) / 10,
   });
-  if (index >= 740) return { events, counts: localCounts };
+  if (index >= thresh(740)) return { events, counts: localCounts };
 
   push("viewed_activity_level", { layout: "cards" });
-  if (index >= 730) return { events, counts: localCounts };
+  if (index >= thresh(730)) return { events, counts: localCounts };
 
   push("selected_activity_level", { level });
-  if (index >= 720) return { events, counts: localCounts };
+  if (index >= thresh(720)) return { events, counts: localCounts };
 
   push("viewed_diet_preferences", { multi_select: true });
-  if (index >= 700) return { events, counts: localCounts };
+  if (index >= thresh(700)) return { events, counts: localCounts };
 
   push("completed_diet_preferences", { restrictions: [...restrictions] });
-  if (index >= 690) return { events, counts: localCounts };
+  if (index >= thresh(690)) return { events, counts: localCounts };
 
   push("viewed_your_plan", {
     preview_calories_band: pick(["low", "mid", "high"] as const),
   });
-  if (index >= 650) return { events, counts: localCounts };
+  if (index >= thresh(650)) return { events, counts: localCounts };
 
   push("clicked_see_my_plan", { placement: "plan_card" });
   if (index >= PAYWALL_VIEWERS) return { events, counts: localCounts };
@@ -265,7 +292,7 @@ async function main() {
   }
 
   const ids = new Set<string>();
-  while (ids.size < 1000) {
+  while (ids.size < TOTAL_USERS) {
     ids.add(distinctId());
   }
   const userIds = Array.from(ids);
@@ -273,7 +300,7 @@ async function main() {
   const allEvents: Queued[] = [];
   const globalCounts: Record<string, number> = {};
 
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < TOTAL_USERS; i++) {
     const { events, counts } = buildQueueForUser(userIds[i]!, i);
     allEvents.push(...events);
     for (const [k, v] of Object.entries(counts)) {
@@ -283,7 +310,11 @@ async function main() {
 
   allEvents.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
-  const client = new PostHog(apiKey, { host, flushAt: 100, flushInterval: 0 });
+  const client = new PostHog(apiKey, {
+    host,
+    flushAt: Math.min(1000, Math.max(100, Math.floor(TOTAL_USERS / 10))),
+    flushInterval: 0,
+  });
 
   for (const e of allEvents) {
     client.capture({
@@ -303,6 +334,7 @@ async function main() {
   const getStarted = globalCounts["clicked_get_started"] ?? 0;
 
   console.log("\nNutriBot seed complete.\n");
+  console.log("Distinct users:", TOTAL_USERS);
   console.log("Host:", host);
   console.log("Total events sent:", allEvents.length);
   console.log("\nPer-event totals:");
