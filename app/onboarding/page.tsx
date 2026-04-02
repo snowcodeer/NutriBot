@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Onboarding shape (loosely like Duolingo → Cal AI → MyFitnessPal):
+ * welcome / goal → profile-like stats → activity → preferences → personalized
+ * plan → paywall. Each step is isolated under screens/ for agent edits.
+ */
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
@@ -56,9 +62,9 @@ export default function OnboardingPage() {
   return (
     <div className="mx-auto min-h-screen max-w-lg">
       <div className="sticky top-0 z-10 bg-background/90 px-4 pb-3 pt-4 backdrop-blur-md">
-        <div className="h-1 overflow-hidden rounded-full bg-white/[0.08]">
+        <div className="h-1 overflow-hidden rounded-full bg-border">
           <motion.div
-            className="h-full rounded-full bg-accent"
+            className="h-full rounded-full bg-foreground"
             initial={false}
             animate={{ width: `${progress}%` }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}

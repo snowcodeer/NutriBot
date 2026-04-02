@@ -53,7 +53,7 @@ export function DietPreferences({ data, setData, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 text-sm text-muted transition hover:text-white"
+        className="mb-6 text-sm text-muted transition hover:text-foreground"
       >
         Back
       </button>
@@ -70,8 +70,8 @@ export function DietPreferences({ data, setData, onNext, onBack }: Props) {
               onClick={() => toggle(pill.id)}
               className={`rounded-full border px-4 py-2.5 text-sm font-medium transition ${
                 on
-                  ? "border-accent bg-accent/15 text-accent"
-                  : "border-border bg-surface text-white/80 hover:border-white/25"
+                  ? "border-foreground bg-foreground/[0.08] text-foreground"
+                  : "border-border bg-surface text-foreground/75 hover:border-foreground/25"
               }`}
             >
               {pill.label}
@@ -82,7 +82,7 @@ export function DietPreferences({ data, setData, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={finish}
-        className="mt-10 w-full rounded-xl bg-accent py-4 font-semibold text-background"
+        className="mt-10 w-full rounded-xl bg-foreground py-4 font-semibold text-background"
       >
         Continue
       </button>

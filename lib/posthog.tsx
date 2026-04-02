@@ -1,36 +1,20 @@
 "use client";
 
 import posthog from "posthog-js";
-import { PostHogProvider } from "posthog-js/react";
-import { useEffect, type ReactNode } from "react";
 
 import type { ActivityLevel, DietRestriction, Goal } from "./onboarding-types";
 
-let initialized = false;
-
-export function initPosthog(): void {
-  if (typeof window === "undefined" || initialized) return;
-  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-  const host =
-    process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
-  if (!key) return;
-  posthog.init(key, {
-    api_host: host,
-    capture_pageview: false,
-    persistence: "localStorage",
-  });
-  initialized = true;
-}
-
-export function PostHogClientProvider({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    initPosthog();
-  }, []);
-  return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
-}
-
 /** All NutriBot analytics events — single place for the product funnel. */
 export const nutribotAnalytics = {
+  viewedHomepage: () => posthog.capture("viewed_homepage"),
+
+  clickedHomeGetStarted: () => posthog.capture("clicked_home_get_started"),
+
+  clickedHomeDashboard: () => posthog.capture("clicked_home_dashboard"),
+
+  viewedAppHome: (props: { daily_calorie_target: number; goal: string | null }) =>
+    posthog.capture("viewed_app_home", props),
+
   viewedWelcomeScreen: () => posthog.capture("viewed_welcome_screen"),
 
   clickedGetStarted: () => posthog.capture("clicked_get_started"),
@@ -69,9 +53,18 @@ export const nutribotAnalytics = {
 
   startedFreeTrial: () => posthog.capture("started_free_trial"),
 
+  /** Use when a user cancels during or right after trial (seed simulates most users doing this). */
+  cancelledFreeTrial: (props?: { reason?: string; within_hours?: number }) =>
+    posthog.capture("cancelled_free_trial", props ?? {}),
+
   clickedLifetimeDeal: () => posthog.capture("clicked_lifetime_deal"),
 
   skippedPaywall: () => posthog.capture("skipped_paywall"),
 
   completedOnboarding: () => posthog.capture("completed_onboarding"),
+
+  viewedDashboard: (props: { has_calorie_target: boolean; goal: string | null }) =>
+    posthog.capture("viewed_dashboard", props),
+
+  clickedRerunSetup: () => posthog.capture("clicked_rerun_setup"),
 };

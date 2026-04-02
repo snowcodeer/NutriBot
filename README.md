@@ -1,6 +1,6 @@
 # NutriBot
 
-Calorie tracker demo: **Next.js 14**, **Tailwind**, **TypeScript**, **PostHog**, **Framer Motion**. Tagline: *Track less. Achieve more.*
+Calorie tracker demo: **Next.js 15**, **Tailwind**, **TypeScript**, **PostHog**, **Framer Motion**. Tagline: *Track less. Achieve more.*
 
 ## Setup
 
@@ -25,12 +25,12 @@ npx tsx seed.ts
 
 Or `npm run seed` after setting env vars.
 
-The script prints per-event totals. In PostHog, create a **Funnel** with steps `viewed_paywall` → `started_free_trial` to show the intentional cliff (about 630 → 90 unique users in seeded data).
+The script prints per-event totals and **synthetic KPIs** (paywall conversion ~2%, high trial cancellation, low onboarding completion). In PostHog, build funnels such as `viewed_paywall` → `started_free_trial` and `started_free_trial` → `cancelled_free_trial`.
 
 ## Deploy (Vercel + GitHub)
 
 1. Create a new repository on GitHub and push this project (`git init`, `git remote add`, `git push`).
-2. In [Vercel](https://vercel.com), **Import** the repo and set environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` (if not US cloud), and optionally `OPENAI_API_KEY`.
+2. In [Vercel](https://vercel.com), **Import** the repo and set environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` (if not US cloud).
 3. Deploy; leave **Production Branch** on `main` so every push auto-deploys.
 
 ## Project layout
@@ -39,4 +39,4 @@ The script prints per-event totals. In PostHog, create a **Funnel** with steps `
 - `lib/posthog.tsx` — PostHog init and **all** `nutribotAnalytics.*` capture helpers
 - `lib/calories.ts` — demo TDEE calculation
 - `seed.ts` — synthetic history via `posthog-node`
-- `competitor-screens/` — placeholder for agent/hackathon assets
+- `competitor-screens/` — reference notes vs MyFitnessPal, Cal AI, Duolingo (`README.md`)

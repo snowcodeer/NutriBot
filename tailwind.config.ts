@@ -12,12 +12,15 @@ const config: Config = {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       colors: {
+        /** Dark mode: near-black canvas */
         background: "#0a0a0a",
+        /** Primary text: white */
         foreground: "#ffffff",
-        accent: "#00ff88",
-        muted: "rgba(255,255,255,0.45)",
+        /** CTAs: white fill, use with `text-background` for black label */
+        accent: "#ffffff",
+        muted: "rgba(255,255,255,0.5)",
         surface: "rgba(255,255,255,0.06)",
-        border: "rgba(255,255,255,0.1)",
+        border: "rgba(255,255,255,0.12)",
       },
     },
   },

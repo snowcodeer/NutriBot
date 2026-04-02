@@ -47,7 +47,7 @@ export function ActivityLevelScreen({ data, setData, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 text-sm text-muted transition hover:text-white"
+        className="mb-6 text-sm text-muted transition hover:text-foreground"
       >
         Back
       </button>
@@ -68,11 +68,11 @@ export function ActivityLevelScreen({ data, setData, onNext, onBack }: Props) {
               }}
               className={`w-full rounded-2xl border p-4 text-left transition ${
                 active
-                  ? "border-accent bg-accent/10"
-                  : "border-border bg-surface hover:border-white/20"
+                  ? "border-foreground bg-foreground/[0.06]"
+                  : "border-border bg-surface hover:border-foreground/25"
               }`}
             >
-              <span className="font-medium text-white">{item.title}</span>
+              <span className="font-medium text-foreground">{item.title}</span>
               <p className="mt-1 text-sm text-muted">{item.description}</p>
             </motion.button>
           );
@@ -82,7 +82,7 @@ export function ActivityLevelScreen({ data, setData, onNext, onBack }: Props) {
         type="button"
         disabled={!selected}
         onClick={onNext}
-        className="mt-10 w-full rounded-xl bg-accent py-4 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-10 w-full rounded-xl bg-foreground py-4 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
       >
         Continue
       </button>

@@ -1,0 +1,12 @@
+[
+  {
+    "event": "dashboard_load_error",
+    "description": "Captured when localStorage parsing fails on the dashboard. Uses posthog.captureException to forward the error to PostHog Error Tracking.",
+    "file": "app/dashboard/page.tsx"
+  },
+  {
+    "event": "onboarding_persist_error",
+    "description": "Captured when persisting onboarding data to localStorage fails on the Paywall screen. Uses posthog.captureException.",
+    "file": "app/onboarding/screens/Paywall.tsx"
+  }
+]

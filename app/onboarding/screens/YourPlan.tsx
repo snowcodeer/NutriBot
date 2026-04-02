@@ -24,7 +24,7 @@ export function YourPlan({ data, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 text-sm text-muted transition hover:text-white"
+        className="mb-6 text-sm text-muted transition hover:text-foreground"
       >
         Back
       </button>
@@ -37,13 +37,13 @@ export function YourPlan({ data, onNext, onBack }: Props) {
         className="mt-10 rounded-2xl border border-border bg-surface p-6"
       >
         <p className="text-sm text-muted">Daily calorie target</p>
-        <p className="mt-2 text-4xl font-semibold tracking-tight text-accent">
+        <p className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
           {calories.toLocaleString()}
-          <span className="ml-1 text-lg font-normal text-white/60">kcal</span>
+          <span className="ml-1 text-lg font-normal text-foreground/45">kcal</span>
         </p>
-        <p className="mt-4 text-base leading-relaxed text-white/85">
+        <p className="mt-4 text-base leading-relaxed text-foreground/80">
           Based on your goals, you need{" "}
-          <span className="font-semibold text-white">{calories.toLocaleString()}</span>{" "}
+          <span className="font-semibold text-foreground">{calories.toLocaleString()}</span>{" "}
           calories per day to stay on track.
         </p>
       </motion.div>
@@ -54,7 +54,7 @@ export function YourPlan({ data, onNext, onBack }: Props) {
           nutribotAnalytics.clickedSeeMyPlan();
           onNext();
         }}
-        className="mt-10 w-full rounded-xl bg-accent py-4 font-semibold text-background"
+        className="mt-10 w-full rounded-xl bg-foreground py-4 font-semibold text-background"
       >
         Continue
       </button>

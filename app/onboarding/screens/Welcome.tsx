@@ -25,10 +25,10 @@ export function Welcome({ onNext }: Props) {
         <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-muted">
           Welcome
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
           NutriBot
         </h1>
-        <p className="mt-4 text-lg text-white/80">
+        <p className="mt-4 text-lg text-foreground/75">
           Track less. Achieve more.
         </p>
         <button
@@ -37,7 +37,7 @@ export function Welcome({ onNext }: Props) {
             nutribotAnalytics.clickedGetStarted();
             onNext();
           }}
-          className="mt-12 w-full rounded-xl bg-accent px-6 py-4 text-base font-semibold text-background transition hover:brightness-110 sm:w-auto sm:min-w-[200px]"
+          className="mt-12 w-full rounded-xl bg-foreground px-6 py-4 text-base font-semibold text-background transition hover:opacity-90 sm:w-auto sm:min-w-[200px]"
         >
           Get Started
         </button>

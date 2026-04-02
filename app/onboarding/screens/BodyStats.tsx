@@ -71,7 +71,7 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 text-sm text-muted transition hover:text-white"
+        className="mb-6 text-sm text-muted transition hover:text-foreground"
       >
         Back
       </button>
@@ -90,8 +90,8 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
             onClick={() => setData((d) => ({ ...d, unitSystem: u }))}
             className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
               unit === u
-                ? "bg-white/10 text-white"
-                : "text-muted hover:text-white"
+                ? "bg-foreground text-background"
+                : "text-muted hover:text-foreground"
             }`}
           >
             {u}
@@ -107,7 +107,7 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
             inputMode="decimal"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-white outline-none ring-accent focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-foreground outline-none ring-foreground focus:ring-2"
           />
         </label>
         <label className="block">
@@ -117,7 +117,7 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
             inputMode="decimal"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-white outline-none ring-accent focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-foreground outline-none ring-foreground focus:ring-2"
           />
         </label>
         <label className="block">
@@ -127,7 +127,7 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
             inputMode="decimal"
             value={target}
             onChange={(e) => setTarget(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-white outline-none ring-accent focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-foreground outline-none ring-foreground focus:ring-2"
           />
         </label>
       </div>
@@ -136,7 +136,7 @@ export function BodyStats({ data, setData, onNext, onBack }: Props) {
         type="button"
         whileTap={{ scale: 0.99 }}
         onClick={persistAndContinue}
-        className="mt-10 w-full rounded-xl bg-accent py-4 font-semibold text-background"
+        className="mt-10 w-full rounded-xl bg-foreground py-4 font-semibold text-background"
       >
         Continue
       </motion.button>

@@ -2,6 +2,11 @@
  * Populate PostHog with synthetic funnel data for NutriBot demos.
  * Run: npx tsx seed.ts
  * Requires POSTHOG_API_KEY (project API key) and optional POSTHOG_HOST.
+ *
+ * Designed so PostHog insights show intentionally poor metrics:
+ * - Onboarding completion: completed_onboarding / clicked_get_started ≈ low single digits %
+ * - Paywall conversion: started_free_trial / viewed_paywall ≈ ~2%
+ * - Trial cancellation: cancelled_free_trial / started_free_trial ≈ most users
  */
 import { randomBytes, randomInt } from "crypto";
 import { PostHog } from "posthog-node";
@@ -15,6 +20,13 @@ const RESTRICTION_SETS = [
   ["none", "other"],
   ["vegan", "other"],
 ] as const;
+
+/** Paywall viewers who start a trial (~2% of paywall). */
+const PAYWALL_VIEWERS = 630;
+const TRIAL_STARTERS = 13;
+const TRIAL_CANCELLED = 11;
+const SKIP_AND_COMPLETE = 8;
+const LIFETIME_CLICKS = 15;
 
 function distinctId(): string {
   return `user_${randomBytes(5).toString("hex")}`;
@@ -30,7 +42,6 @@ function randomMsInLast7Days(): number {
   return now - randomInt(weekMs);
 }
 
-/** Per-user session start; events stack forward from here. */
 function sessionStartMs(): number {
   return randomMsInLast7Days();
 }
@@ -118,22 +129,38 @@ function buildQueueForUser(
   if (index >= 650) return { events, counts: localCounts };
 
   push("clicked_see_my_plan", { placement: "plan_card" });
-  if (index >= 630) return { events, counts: localCounts };
+  if (index >= PAYWALL_VIEWERS) return { events, counts: localCounts };
 
   push("viewed_paywall", { variant: "pre_value_hard" });
 
-  if (index < 15) {
+  if (index < LIFETIME_CLICKS) {
     push("clicked_lifetime_deal", { price_usd: 49, visibility: "footer_micro" });
   }
 
-  /* 90 trial starts (0–89); 80 complete via trial (0–79); 10 trial-only drop (80–89);
-     8 complete via skip without trial (90–97). */
-  if (index < 90) {
+  /*
+   * Paywall cohort (first PAYWALL_VIEWERS users): terrible conversion + retention story.
+   * - Indices 0..TRIAL_STARTERS-1: start trial (≈2% of paywall views).
+   * - Indices 0..TRIAL_CANCELLED-1: cancel trial soon after (most trial starters churn).
+   * - Indices TRIAL_CANCELLED..TRIAL_STARTERS-1: keep trial + completed_onboarding.
+   * - Indices TRIAL_STARTERS..TRIAL_STARTERS+SKIP_AND_COMPLETE-1: skip paywall + completed_onboarding.
+   * Everyone else: hits paywall and bounces (no completion).
+   */
+  if (index < TRIAL_STARTERS) {
     push("started_free_trial", { plan: "monthly_9_99" });
-    if (index < 80) {
-      push("completed_onboarding", { path: "trial" });
+    if (index < TRIAL_CANCELLED) {
+      push("cancelled_free_trial", {
+        reason: pick([
+          "price_shock",
+          "accidental_tap",
+          "reminder_email",
+          "app_store_flow",
+        ] as const),
+        within_hours: pick([1, 6, 12, 24, 48] as const),
+      });
+    } else {
+      push("completed_onboarding", { path: "trial_retained" });
     }
-  } else if (index < 98) {
+  } else if (index < TRIAL_STARTERS + SKIP_AND_COMPLETE) {
     push("skipped_paywall", { surface: "maybe_later_microcopy" });
     push("completed_onboarding", { path: "skip" });
   }
@@ -187,9 +214,15 @@ async function main() {
 
   await client.shutdown();
 
+  const started = globalCounts["started_free_trial"] ?? 0;
+  const paywallViews = globalCounts["viewed_paywall"] ?? 0;
+  const cancelled = globalCounts["cancelled_free_trial"] ?? 0;
+  const completed = globalCounts["completed_onboarding"] ?? 0;
+  const getStarted = globalCounts["clicked_get_started"] ?? 0;
+
   console.log("\nNutriBot seed complete.\n");
   console.log("Total events sent:", allEvents.length);
-  console.log("\nPer-event totals (should match funnel story):");
+  console.log("\nPer-event totals:");
   const order = [
     "viewed_welcome_screen",
     "clicked_get_started",
@@ -205,6 +238,7 @@ async function main() {
     "clicked_see_my_plan",
     "viewed_paywall",
     "started_free_trial",
+    "cancelled_free_trial",
     "clicked_lifetime_deal",
     "skipped_paywall",
     "completed_onboarding",
@@ -212,10 +246,20 @@ async function main() {
   for (const name of order) {
     console.log(`  ${name}: ${globalCounts[name] ?? 0}`);
   }
+
+  const paywallConvPct = paywallViews ? (started / paywallViews) * 100 : 0;
+  const trialCancelPct = started ? (cancelled / started) * 100 : 0;
+  const onboardPct = getStarted ? (completed / getStarted) * 100 : 0;
+
+  console.log("\n--- Synthetic health metrics (should look bad) ---");
   console.log(
-    "\nUnique users with viewed_paywall:",
-    userIds.slice(0, 630).length,
-    "| started_free_trial cohort size: 90 | completed_onboarding: 88"
+    `Paywall conversion (started_free_trial / viewed_paywall): ${started}/${paywallViews} ≈ ${paywallConvPct.toFixed(1)}% (target ~2%)`
+  );
+  console.log(
+    `Trial cancellation (cancelled_free_trial / started_free_trial): ${cancelled}/${started} ≈ ${trialCancelPct.toFixed(0)}% (most cancel)`
+  );
+  console.log(
+    `Onboarding completion (completed_onboarding / clicked_get_started): ${completed}/${getStarted} ≈ ${onboardPct.toFixed(1)}% (most never finish)`
   );
 }
 

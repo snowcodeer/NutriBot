@@ -74,7 +74,7 @@ export function GoalSelection({ data, setData, onNext, onBack }: Props) {
       <button
         type="button"
         onClick={onBack}
-        className="mb-6 text-sm text-muted transition hover:text-white"
+        className="mb-6 text-sm text-muted transition hover:text-foreground"
       >
         Back
       </button>
@@ -95,13 +95,13 @@ export function GoalSelection({ data, setData, onNext, onBack }: Props) {
               }}
               className={`flex w-full items-start gap-4 rounded-2xl border p-4 text-left transition ${
                 active
-                  ? "border-accent bg-accent/10 text-white"
-                  : "border-border bg-surface text-white/90 hover:border-white/20"
+                  ? "border-foreground bg-foreground/[0.06] text-foreground"
+                  : "border-border bg-surface text-foreground/90 hover:border-foreground/25"
               }`}
             >
               <span
                 className={
-                  active ? "text-accent" : "text-white/50"
+                  active ? "text-foreground" : "text-foreground/40"
                 }
               >
                 {opt.icon}
@@ -118,7 +118,7 @@ export function GoalSelection({ data, setData, onNext, onBack }: Props) {
         type="button"
         disabled={!selected}
         onClick={onNext}
-        className="mt-10 w-full rounded-xl bg-accent py-4 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-10 w-full rounded-xl bg-foreground py-4 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
       >
         Continue
       </button>
