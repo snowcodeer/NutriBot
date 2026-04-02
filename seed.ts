@@ -1,7 +1,12 @@
+import { config as loadEnv } from "dotenv";
+
+loadEnv({ path: ".env" });
+loadEnv({ path: ".env.local", override: true });
+
 /**
  * Populate PostHog with synthetic funnel data for NutriBot demos.
  * Run: npm run seed
- * Requires POSTHOG_API_KEY (or NEXT_PUBLIC_POSTHOG_KEY) and optional POSTHOG_HOST.
+ * Loads `.env.local` / `.env` automatically. Or set POSTHOG_API_KEY / NEXT_PUBLIC_POSTHOG_KEY yourself.
  *
  * Emits every event used by `nutribotAnalytics` plus rich properties and $set person fields
  * so funnels, breakdowns, and person profiles look populated in PostHog.

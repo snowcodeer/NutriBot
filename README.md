@@ -31,12 +31,12 @@ Use **`styled-jsx@5.1.6`** (matches Next’s version). Avoid `styled-jsx@5.1.7` 
 Use the same **Project API key** (or a personal API key with event write access) as in PostHog docs.
 
 ```bash
-export POSTHOG_API_KEY=phc_...
-# EU cloud (default in seed if unset): export POSTHOG_HOST=https://eu.i.posthog.com
 npm run seed
 ```
 
-The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding, so Insights and person profiles are populated.
+Reads **`POSTHOG_API_KEY`** or **`NEXT_PUBLIC_POSTHOG_KEY`** from **`.env.local`** automatically (via `dotenv`). Override host with **`POSTHOG_HOST`** if needed; EU default is `https://eu.i.posthog.com`.
+
+The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding. Expect **~630** `viewed_paywall`, **~13** `started_free_trial` (≈**2%** conversion) so paywall funnels match the demo story.
 
 Or `npm run seed` after setting env vars.
 
