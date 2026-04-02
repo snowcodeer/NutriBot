@@ -70,6 +70,17 @@ const TRIAL_CANCELLED = Math.floor(11 * K);
 const SKIP_AND_COMPLETE = Math.floor(8 * K);
 const LIFETIME_CLICKS = Math.floor(15 * K);
 
+/**
+ * Match `posthog.register()` in instrumentation-client.ts so dashboards that filter on
+ * app / product_area include synthetic users. Without these, only ~live~ traffic appears.
+ */
+const GLOBAL_EVENT_PROPS: Record<string, unknown> = {
+  app: "nutribot",
+  app_version: "1.0.0",
+  product_area: "mobile_web",
+  synthetic_seed: true,
+};
+
 function distinctId(): string {
   return `user_${randomBytes(5).toString("hex")}`;
 }
@@ -124,7 +135,12 @@ function buildQueueForUser(
     event: string,
     properties?: Record<string, unknown>
   ) => {
-    events.push({ distinctId: id, event, properties, timestamp: new Date(t) });
+    events.push({
+      distinctId: id,
+      event,
+      properties: { ...GLOBAL_EVENT_PROPS, ...properties },
+      timestamp: new Date(t),
+    });
     bump(event);
     t = nextEventTime(t);
   };

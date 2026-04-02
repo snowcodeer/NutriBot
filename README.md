@@ -40,6 +40,8 @@ Optional **`SEED_TOTAL_USERS`** (default **10000**, max 500000) scales the funne
 
 The seed sends **all** NutriBot funnel events (marketing, onboarding, paywall, app home) plus **`$set` person properties** for users who finish onboarding. At default scale expect **~6300** `viewed_paywall`, **~130** `started_free_trial` (≈**2%** conversion).
 
+Seeded events include **`app`**, **`product_area`**, and **`app_version`** (same as the live client) plus **`synthetic_seed: true`**. If an insight shows only ~100–200 users, remove filters on those properties or include `synthetic_seed` / unfiltered “all events.”
+
 Or `npm run seed` after setting env vars.
 
 The script prints per-event totals and **synthetic KPIs** (paywall conversion ~2%, high trial cancellation, low onboarding completion). In PostHog, build funnels such as `viewed_paywall` → `started_free_trial` and `started_free_trial` → `cancelled_free_trial`.
